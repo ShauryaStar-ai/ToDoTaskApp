@@ -6,10 +6,13 @@ import com.shaurya.ToDoApp.Repositires.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+
+
 @Service
 public class UserService {
     @Autowired
@@ -17,9 +20,13 @@ public class UserService {
     public User getUserByUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        return userRepo.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
     }
+    public List<User> returnAllEntries(){
+        return userRepo.findAll();
+    }
+
+    private static PasswordEncoder p  = new BCryptPasswordEncoder();
 
     public boolean saveNewUser(User user){
         boolean userSavedSucessfully = false;
@@ -41,7 +48,11 @@ public class UserService {
             throw new IllegalStateException("Username already exists");
         }
 
-        else{        userRepo.save(user);
+        else{
+            String rawPassword = user.getPassWord(); // get the plain password from user object
+            String encodedPassword = p.encode(rawPassword); // encode it with BCrypt
+            user.setPassWord(encodedPassword);
+            userRepo.save(user);
         userSavedSucessfully = true;
         }
         return userSavedSucessfully;
