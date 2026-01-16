@@ -80,4 +80,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be updated ");
         }
     }
+        @DeleteMapping("/deleteUser")
+        public ResponseEntity<String> deleteUser(){
+            boolean isDeleteUser = userService.deleteUser();
+            if(isDeleteUser){
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("User deleted Successfully");
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be deleted ");
+            }
+        }
+
+
     }

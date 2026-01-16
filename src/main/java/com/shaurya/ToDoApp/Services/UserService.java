@@ -48,6 +48,13 @@ public class UserService {
         }
 
     }
+    public boolean deleteUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userName = auth.getName();
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepo.delete(user);
+        return true;
+    }
 
     @Autowired
     PasswordEncoder p;
