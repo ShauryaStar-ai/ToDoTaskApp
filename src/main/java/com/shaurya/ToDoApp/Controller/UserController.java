@@ -6,6 +6,7 @@ import com.mongodb.client.internal.MongoClientImpl;
 import com.shaurya.ToDoApp.Configs.Test.Sandeep;
 import com.shaurya.ToDoApp.Configs.Test.ShauryaImpl;
 import com.shaurya.ToDoApp.Configs.Test.ShauryaInterface;
+import com.shaurya.ToDoApp.Objects.Task;
 import com.shaurya.ToDoApp.Objects.User;
 import com.shaurya.ToDoApp.Repositires.UserRepo;
 import com.shaurya.ToDoApp.Services.UserService;
@@ -20,6 +21,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 
@@ -34,15 +37,18 @@ public class UserController {
 
 
     @GetMapping("/getUserInfo")
-    public ResponseEntity<Object> getUserTask(){
+    public ResponseEntity<Object> getUserTask(@RequestHeader Map<String, String> headers){
+        headers.forEach((key, value) -> {
+            System.out.println(String.format("Header '%s' = %s", key, value));
+        });
       // getting the name of the user logged in using the security context
         try {
 
             User loggedInUser = userService.getUserByUserName(); // we now have the user and then authenicated
             String userName = loggedInUser.getUserName();
             String passWord = loggedInUser.getPassWord(); // do some thing for privacy later here
-//            ArrayList<DBRef> toDoTasks = loggedInUser.getTasksByTheUser();
-            List<Serializable> userInformation = Arrays.asList(userName, passWord);
+          List<Task> toDoTasks = loggedInUser.getTasksByTheUser();
+            List<Object> userInformation = Arrays.asList(userName, passWord,toDoTasks);
             // Entries found → return 200 OK + data
             return ResponseEntity.ok(userInformation);
 
@@ -62,4 +68,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be made ");
         }
     }
-}
+    @PutMapping("/editUserInfo")
+    public ResponseEntity<String> editUserInfo(@RequestBody User userNew){
+
+
+        boolean isUpdatedUser = userService.saveUpdatedUser(userNew);
+        if(isUpdatedUser){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("User updated Successfully");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be updated ");
+        }
+    }
+    }

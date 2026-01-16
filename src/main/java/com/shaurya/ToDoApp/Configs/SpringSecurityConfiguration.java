@@ -22,16 +22,9 @@ public class SpringSecurityConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Allow anyone to create the first user
                         .requestMatchers("/user/createUser").permitAll()
-
                         .requestMatchers("/user/**").authenticated()
-                        // Protect task endpoints
-                        .requestMatchers("/task/**").authenticated()
-                        // Protect admin endpoints
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Everything else is public
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
@@ -41,12 +34,14 @@ public class SpringSecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+    
 
 
     }

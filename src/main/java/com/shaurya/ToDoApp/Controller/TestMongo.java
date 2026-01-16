@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 
-@Component
+//@Component
 public class TestMongo /*implements CommandLineRunner*/ {
 
     @Autowired

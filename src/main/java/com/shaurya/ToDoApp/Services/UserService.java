@@ -4,10 +4,12 @@ import com.shaurya.ToDoApp.Objects.Task;
 import com.shaurya.ToDoApp.Objects.User;
 import com.shaurya.ToDoApp.Repositires.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,10 +27,33 @@ public class UserService {
     public List<User> returnAllEntries(){
         return userRepo.findAll();
     }
+    public boolean saveUpdatedUser(User userNew){
+        boolean userSaved ;
+        try{
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userName = auth.getName();
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setUserName(userNew.getUserName());
+        user.setPassWord(userNew.getPassWord());
+        user.setRoles(userNew.getRoles());
+        user.setEmailAddress(userNew.getEmailAddress());
+        userRepo.save(user);
+             userSaved = true;
+        return userSaved;
+        }
+        catch (Exception e) {
+            userSaved = false;
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
-    private static PasswordEncoder p  = new BCryptPasswordEncoder();
+    }
+
+    @Autowired
+    PasswordEncoder p;
 
     public boolean saveNewUser(User user){
+
         boolean userSavedSucessfully = false;
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
