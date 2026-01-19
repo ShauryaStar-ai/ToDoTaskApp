@@ -4,6 +4,7 @@ import com.shaurya.ToDoApp.Objects.Task;
 import com.shaurya.ToDoApp.Objects.User;
 import com.shaurya.ToDoApp.Repositires.TaskRepo;
 import com.shaurya.ToDoApp.Repositires.UserRepo;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -54,6 +56,45 @@ public class TaskService {
             return true;
         }
         catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean upDateTask(ObjectId id, Task newTask){
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null) {
+                throw new RuntimeException("Authentication not found");
+            }
+            String userName = auth.getName();
+            User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Check if the task belongs to the user
+            boolean isOwned = false;
+            if (user.getTasksByTheUser() != null) {
+                for (Task t : user.getTasksByTheUser()) {
+                    if (t.getId().equals(id)) {
+                        isOwned = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isOwned) {
+                return false;
+            }
+
+            Optional<Task> taskOptional = taskRepo.findById(id);
+            if (taskOptional.isPresent()) {
+                Task existingTask = taskOptional.get();
+                existingTask.setContent(newTask.getContent());
+                existingTask.setDueDate(newTask.getDueDate());
+                taskRepo.save(existingTask);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

@@ -2,6 +2,7 @@ package com.shaurya.ToDoApp.Controller;
 
 import com.shaurya.ToDoApp.Objects.Task;
 import com.shaurya.ToDoApp.Services.TaskService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,16 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Task Created Successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Task cannot be made. Check server logs for details.");
+        }
+    }
+    
+    @PutMapping("/editTask/{id}")
+    public ResponseEntity<Boolean> editTask(@PathVariable ObjectId id, @RequestBody Task t) {
+        boolean taskUpdated = taskService.upDateTask(id, t);
+        if (taskUpdated) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
         }
     }
 }
