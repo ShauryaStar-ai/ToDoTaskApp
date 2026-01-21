@@ -38,12 +38,22 @@ public class TaskController {
     }
     
     @PutMapping("/editTask/{id}")
-    public ResponseEntity<Boolean> editTask(@PathVariable ObjectId id, @RequestBody Task t) {
+    public ResponseEntity<String> editTask(@PathVariable ObjectId id, @RequestBody Task t) {
         boolean taskUpdated = taskService.upDateTask(id, t);
         if (taskUpdated) {
-            return ResponseEntity.ok(true);
+            return ResponseEntity.ok("Task updated successfully");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found or not updated");
         }
     }
-}
+    @DeleteMapping("/deleteTask/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable ObjectId id) {
+        boolean taskDeleted = taskService.removeTask(id);
+        if(taskDeleted){
+            return ResponseEntity.ok("Task updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found or not updated");
+        }
+        }
+    }
+

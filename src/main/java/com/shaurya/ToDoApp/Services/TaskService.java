@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +98,38 @@ public class TaskService {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    @Transactional
+    public boolean removeTask(ObjectId id){
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null){
+                throw new RuntimeException("Authentication not found");
+            }
+            String userName = auth.getName();
+            User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+            
+            Optional<Task> taskOptional = taskRepo.findById(id);
+            if (taskOptional.isEmpty()) {
+                return false;
+            }
+            Task task = taskOptional.get();
+
+            boolean ownsTask = user.getTasksByTheUser().stream().anyMatch(x -> x.getId().equals(id));
+            if (!ownsTask) {
+                return false;
+            }
+            
+            // Remove task from user
+            user.getTasksByTheUser().removeIf(x -> x.getId().equals(id));
+            // Persist user change
+            userRepo.save(user);
+            // Delete task entity
+            taskRepo.delete(task);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
