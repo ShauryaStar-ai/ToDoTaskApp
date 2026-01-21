@@ -42,6 +42,15 @@ public class TaskService {
             String userName = auth.getName();
             User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
             
+            // Check if the task already exists for the user
+            if (user.getTasksByTheUser() != null) {
+                for (Task task : user.getTasksByTheUser()){
+                    if (task.getContent().equals(t.getContent()) && task.getDueDate().equals(t.getDueDate())){
+                        return false;
+                    }
+                }
+            }
+            
             // Save the task first to generate an ID
             Task savedTask = taskRepo.save(t);
             
