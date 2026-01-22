@@ -37,10 +37,7 @@ public class UserController {
 
 
     @GetMapping("/getUserInfo")
-    public ResponseEntity<Object> getUserTask(@RequestHeader Map<String, String> headers){
-        headers.forEach((key, value) -> {
-            System.out.println(String.format("Header '%s' = %s", key, value));
-        });
+    public ResponseEntity<Object> getUserTask(){
       // getting the name of the user logged in using the security context
         try {
 
