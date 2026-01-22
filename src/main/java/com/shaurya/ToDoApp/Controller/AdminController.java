@@ -2,8 +2,8 @@ package com.shaurya.ToDoApp.Controller;
 
 import com.shaurya.ToDoApp.Objects.AdminUser;
 import com.shaurya.ToDoApp.Services.AdminSerivce;
-import com.shaurya.ToDoApp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +24,12 @@ public class AdminController {
         }
     }
     @GetMapping("/getAdminInfo")
-    public ResponseEntity<String> getAdminInfo(){
-        boolean userInformation = adminSerivce.findUserInfo();
+    public ResponseEntity<?> getAdminInfo(){
+        AdminUser adminUser = adminSerivce.findUserInfo();
+        if (adminUser != null) {
+            return ResponseEntity.ok(adminUser);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found");
     }
 
 }

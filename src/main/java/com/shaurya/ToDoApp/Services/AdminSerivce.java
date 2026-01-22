@@ -4,6 +4,8 @@ import com.shaurya.ToDoApp.Objects.AdminUser;
 import com.shaurya.ToDoApp.Objects.User;
 import com.shaurya.ToDoApp.Repositires.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,8 @@ public class AdminSerivce {
     UserRepo userRepo;
     @Autowired
     PasswordEncoder p;
-    public  boolean saveNewAdmin(AdminUser admin){
+    
+    public boolean saveNewAdmin(AdminUser admin){
 
         boolean userSavedSucessfully = false;
         if (admin == null) {
@@ -52,7 +55,19 @@ public class AdminSerivce {
         }
         return userSavedSucessfully;
     }
-    public boolean findUserInfo(){
-
+    
+    public AdminUser findUserInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userRepo.findByUserName(userName).orElse(null);
+        if(user != null){
+            AdminUser adminUser = new AdminUser();
+            adminUser.setUserName(user.getUserName());
+            adminUser.setRoles(user.getRoles());
+            adminUser.setEmailAddress(user.getEmailAddress());
+            adminUser.setPassWord(user.getPassWord());
+            return adminUser;
+        }
+        return null;
     }
 }

@@ -25,6 +25,7 @@ public class SpringSecurityConfiguration {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/createUser").permitAll()
+                        .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/task/**").authenticated()
                         .anyRequest().authenticated()
