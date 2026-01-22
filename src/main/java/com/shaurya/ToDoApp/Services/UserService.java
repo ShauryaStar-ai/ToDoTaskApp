@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -34,7 +36,7 @@ public class UserService {
         String userName = auth.getName();
         User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
         user.setUserName(userNew.getUserName());
-        user.setPassWord(userNew.getPassWord());
+        user.setPassWord(p.encode(userNew.getPassWord()));
         user.setRoles(userNew.getRoles());
         user.setEmailAddress(userNew.getEmailAddress());
         userRepo.save(user);
@@ -84,6 +86,7 @@ public class UserService {
             String rawPassword = user.getPassWord(); // get the plain password from user object
             String encodedPassword = p.encode(rawPassword); // encode it with BCrypt
             user.setPassWord(encodedPassword);
+            user.setRoles(new ArrayList<>(Arrays.asList("USER")));
             userRepo.save(user);
         userSavedSucessfully = true;
         }

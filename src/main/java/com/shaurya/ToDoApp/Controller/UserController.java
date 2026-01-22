@@ -46,9 +46,8 @@ public class UserController {
 
             User loggedInUser = userService.getUserByUserName(); // we now have the user and then authenicated
             String userName = loggedInUser.getUserName();
-            String passWord = loggedInUser.getPassWord(); // do some thing for privacy later here
           List<Task> toDoTasks = loggedInUser.getTasksByTheUser();
-            List<Object> userInformation = Arrays.asList(userName, passWord,toDoTasks);
+            List<Object> userInformation = Arrays.asList(userName,toDoTasks);
             // Entries found → return 200 OK + data
             return ResponseEntity.ok(userInformation);
 
