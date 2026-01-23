@@ -1,11 +1,14 @@
 package com.shaurya.ToDoApp.Controller;
 
 import com.shaurya.ToDoApp.Objects.AdminUser;
+import com.shaurya.ToDoApp.Objects.User;
 import com.shaurya.ToDoApp.Services.AdminSerivce;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // have a send email meathod to the user
 @RestController
@@ -31,5 +34,16 @@ public class AdminController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found");
     }
+    @GetMapping("/getAllUsers")  public ResponseEntity<?> getAllUsersInfo(){
+        List<User> allUsersInfo = adminSerivce.getAllUsersInfo();
+        if (allUsersInfo != null) {
+            return ResponseEntity.ok(allUsersInfo);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not return all users");
+        }
+
+    }
+
 
 }

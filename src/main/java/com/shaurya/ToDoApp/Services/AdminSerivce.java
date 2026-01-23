@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class AdminSerivce {
@@ -20,7 +21,13 @@ public class AdminSerivce {
     PasswordEncoder p;
     
     public boolean saveNewAdmin(AdminUser admin){
-
+        List<User> users = userRepo.findAll();
+        // untested logic right here 
+        for (User user : users){
+            if(user.getRoles().contains("ADMIN")){
+                throw new IllegalStateException("There can only be one admin");
+            }
+        }
         boolean userSavedSucessfully = false;
         if (admin == null) {
             throw new IllegalArgumentException("User cannot be null");
@@ -69,5 +76,9 @@ public class AdminSerivce {
             return adminUser;
         }
         return null;
+    }
+    public List<User> getAllUsersInfo(){
+        List<User> all = userRepo.findAll();
+        return all;
     }
 }
