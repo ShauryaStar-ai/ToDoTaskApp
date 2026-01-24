@@ -22,7 +22,6 @@ public class AdminSerivce {
     
     public boolean saveNewAdmin(AdminUser admin){
         List<User> users = userRepo.findAll();
-        // untested logic right here 
         for (User user : users){
             if(user.getRoles().contains("ADMIN")){
                 throw new IllegalStateException("There can only be one admin");
