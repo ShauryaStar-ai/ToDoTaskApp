@@ -80,4 +80,24 @@ public class AdminSerivce {
         List<User> all = userRepo.findAll();
         return all;
     }
+    public boolean updateAdmin(AdminUser adminUser){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth == null){
+            throw new RuntimeException("Authentication not found");
+        }
+        String userName = auth.getName();
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        if(adminUser.getUserName() == null || adminUser.getPassWord() == null || adminUser.getRoles() == null  ){
+            throw new RuntimeException("Incomplete admin user information");
+        }
+        user.setUserName(adminUser.getUserName());
+        String rawPassword = adminUser.getPassWord(); // get the plain password from user object
+        String encodedPassword = p.encode(rawPassword); // encode it with BCrypt
+        user.setPassWord(encodedPassword);
+        user.setPassWord(adminUser.getPassWord());
+        user.setEmailAddress(adminUser.getEmailAddress());
+        user.setRoles((ArrayList<String>) adminUser.getRoles());
+        userRepo.save(user);
+        return true;
+    }
 }

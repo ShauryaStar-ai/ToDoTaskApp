@@ -34,7 +34,8 @@ public class AdminController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found");
     }
-    @GetMapping("/getAllUsers")  public ResponseEntity<?> getAllUsersInfo(){
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<?> getAllUsersInfo(){
         List<User> allUsersInfo = adminSerivce.getAllUsersInfo();
         if (allUsersInfo != null) {
             return ResponseEntity.ok(allUsersInfo);
@@ -43,6 +44,16 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not return all users");
         }
 
+    }
+    @PutMapping("/updateAdminInfo")
+    public ResponseEntity<?> updateAdminInfo(@RequestBody AdminUser adminUser){
+        boolean updateAdmin = adminSerivce.updateAdmin(adminUser);
+        if(updateAdmin){
+            return ResponseEntity.ok("Admin updated successfully");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin could not be updated");
+        }
     }
 
 
