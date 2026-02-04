@@ -20,9 +20,7 @@ public class SpringSecurityConfiguration {
         
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/createUser").permitAll()
                         .requestMatchers("/admin/makeNewAdmin").permitAll()
