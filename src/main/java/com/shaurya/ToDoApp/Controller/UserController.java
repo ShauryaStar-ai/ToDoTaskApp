@@ -1,25 +1,17 @@
 package com.shaurya.ToDoApp.Controller;
 
-import com.mongodb.DBRef;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.internal.MongoClientImpl;
 
 import com.shaurya.ToDoApp.Objects.Task;
 import com.shaurya.ToDoApp.Objects.User;
-import com.shaurya.ToDoApp.Repositires.UserRepo;
 import com.shaurya.ToDoApp.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -52,7 +44,7 @@ public class UserController {
         }
 
     }
-    @PostMapping("/createUser")
+    @PostMapping("/signUp")
     public ResponseEntity<String> addUser(@RequestBody User user){
         boolean userSavingConidtion = userService.saveNewUser(user);
         if(userSavingConidtion){
@@ -60,6 +52,18 @@ public class UserController {
         }
        else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be made ");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User user){
+        // authenticate user based on thier userName and Password
+        String jwtToken = userService.JWT(user);
+        if(jwtToken != null){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(jwtToken);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User cannot be loggedIn ");
         }
     }
     @PutMapping("/editUserInfo")
