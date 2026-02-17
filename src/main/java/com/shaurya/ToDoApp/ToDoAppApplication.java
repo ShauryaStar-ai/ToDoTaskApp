@@ -1,5 +1,6 @@
 package com.shaurya.ToDoApp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,11 +27,10 @@ public class ToDoAppApplication {
 	}
 
 	@Bean
-	public CommandLineRunner commandLineRunner() {
-		return args -> {
-			System.out.println("Client ID: " + clientId);
-			System.out.println("Client Secret: " + clientSecret);
-		};
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
+
+
 
 }

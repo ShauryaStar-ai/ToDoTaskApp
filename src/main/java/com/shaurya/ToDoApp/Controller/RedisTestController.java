@@ -18,11 +18,13 @@ public class RedisTestController {
         try {
             // Set a value
             redisTemplate.opsForValue().set("test_key", "Hello Redis from Spring Boot!");
-            
+            redisTemplate.opsForValue().set("emial", "bob@gmial.com");
+
             // Get the value
             String value = redisTemplate.opsForValue().get("test_key");
-            
-            return "Redis Test Successful! Retrieved value: " + value;
+            String value2 = redisTemplate.opsForValue().get("emial");
+
+            return "Redis Test Successful! Retrieved value: " + value+ value2;
         } catch (Exception e) {
             e.printStackTrace();
             return "Redis Test Failed: " + e.getMessage();
